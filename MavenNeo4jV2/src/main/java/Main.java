@@ -5,8 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Main {
+    static Scanner sc = new Scanner(System.in);
 
     public static void main(String[] args) {
         String QuerytoExecute = "MATCH (n) RETURN n ";
@@ -19,26 +21,41 @@ public class Main {
         //Executes and returns information. Use the commented line below to execute a query and retrieve information.
         //System.out.println(ExecuteRequestQuery(QuerytoExecute));
         
+        //Insert an item
+        int selection=1;
+        while(selection !=-1){
+            System.out.println("1/ Insert item");
+            System.out.println("2/ Delete Data");
+            System.out.println("3/ Read Item");
+            System.out.println("4/ Update Item");
+            System.out.println("5/ Exit");
+            int choice;
+            
+            choice = sc.nextInt();
+            if (selection == 1) {
+                String type;
+                System.out.println("1/ Person");
+                System.out.println("2/ Enterprise");
+                System.out.println("3/ Exit");
+                type = sc.next();
+                if (type=="1") {
+                    
+                }
+                else if(type=="2"){
+                    
+                }
+            }
+            else if (choice==5) {
+                selection = -1;
+            }
+            
+        }
         System.out.println("Ended");
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    public static void InsertEnterprise(){
+        
+    }
     
     
     //Favor no tocar gracias.

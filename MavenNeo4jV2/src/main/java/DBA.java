@@ -15,7 +15,7 @@ public class DBA {
     public void Connect() {
         try {
             System.out.println("Attempting to connect to database.");
-            con = DriverManager.getConnection("jdbc:neo4j:bolt://localhost/?user=neo4j,password=1234,scheme=basic");
+            con = DriverManager.getConnection("jdbc:neo4j:bolt://localhost/?user=neo4j,password=12345,scheme=basic");
             query = con.createStatement();
             System.out.println("Connection with the database successfull.");
         } catch (Exception e) {
