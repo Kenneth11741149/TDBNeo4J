@@ -60,7 +60,12 @@ public class Main {
                     deleteTuple = tb.deleteUser(Identifier);
                     ExecuteQuery(deleteTuple);
                 }else if(select == 2){
-                    
+                    String Identifier="";
+                    System.out.println("Enter the IP: ");
+                    Identifier= sc.nextLine();
+                    String deleteTuple="";
+                    deleteTuple = tb.deleteEnterprise(Identifier);
+                    ExecuteQuery(deleteTuple);
                 }else if(select == 3){
                     System.out.println("WARNING");
                     System.out.println("Core purge will delete all data"

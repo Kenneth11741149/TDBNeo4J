@@ -89,4 +89,13 @@ public class TesterBeta {
         return retVal;
     }
     
+    public String deleteEnterprise(String IP){
+        String retVal="";
+        retVal+="MATCH (n {";
+        retVal+="IP: ";
+        retVal+="'"+IP+"'";
+        retVal+=" }) DETACH DELETE n";
+        return retVal;
+    }
+    
 }
