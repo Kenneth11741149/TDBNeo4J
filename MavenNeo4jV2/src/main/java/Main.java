@@ -1,4 +1,5 @@
 
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -8,14 +9,38 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
+
     static Scanner sc = new Scanner(System.in);
     static TesterBeta tb = new TesterBeta();
+
     public static void main(String[] args) {
+        System.out.println("Started");
+        Kenneth test = new Kenneth();
+        test.fakemain();
+        //ExecuteQuery("");
         
         
- 
         
-        int selection=1;
+        ///////////////////////////////////////////////////////NOOO BORRARR SE PODRIAN OCUPAR LUEGO.
+        
+        
+        
+        
+       // ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (p:Company)\n" +
+//"WHERE p.Name = \"Erickson\" Return p");
+       // System.out.println(DatabaseRequest.size());
+       // System.out.println(DatabaseRequest.toString());
+        
+        
+        //ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (p:Person)\n" + "WHERE p.PhoneNumber = \"" + "9637-4467" + "\"\n" + "RETURN p");
+        //System.out.println(DatabaseRequest.size());
+        
+        
+        ///////////////////////////////////////////////////// NO BORRAR SE PODRIAN OCUPAR LIEGO
+        
+        
+        
+        /*int selection=1;
         while(selection !=-1){
             System.out.println("1/ Insert item");
             System.out.println("2/ Delete Data");
@@ -85,30 +110,22 @@ public class Main {
                 selection = -1;
             }
             
-        }
+        }*/
         System.out.println("Ended");
         String QuerytoExecute = "MATCH (n) RETURN n";
-        
-        
+
         //Executes the Cypher Query. Use the commented line below to just execute a query
-        ExecuteQuery(QuerytoExecute);
-        
-        
+        //ExecuteQuery(QuerytoExecute);
         //Executes and returns information. Use the commented line below to execute a query and retrieve information.
         //System.out.println(ExecuteRequestQuery(QuerytoExecute));
-        
-
     }
 
-
-    
-    
     //Favor no tocar gracias.
     public static void ExecuteQuery(String query) {
         try {
             DBA database = new DBA();
             database.query.execute(query);
-            database.commit();
+            //database.commit();
             database.Disconnect();
         } catch (Exception e) {
             e.printStackTrace();
