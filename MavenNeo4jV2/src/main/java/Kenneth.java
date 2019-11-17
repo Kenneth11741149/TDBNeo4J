@@ -129,7 +129,7 @@ public class Kenneth {
         //New Person Attributes(idNumber, name, age, address, phonenumber,HealthHistory,PhysicalProblems,MentalProblems,MilitaryService,LawIssues,AcademicPreparation
         String query = CypherPersonCreator(idnumber, name, age, address, phonenumber, History, Physical, Mental, Military, Justice, AcademicPreparation);
         System.out.println(query);
-        //ExecuteQuery(query);
+        ExecuteQuery(query);
         System.out.println();
         System.out.println();
         System.out.println();
@@ -215,6 +215,11 @@ public class Kenneth {
 
                         break;
                     case 3:
+                        ArrayList DatabaseInfo = ExecuteRequestQuery("MATCH (p:JobOffer)\n" + "WHERE p.CompanyCIF = \"" + CIF + "\" Return p");
+                        System.out.println("");
+                        for (int i = 0; i < DatabaseInfo.size(); i++) {
+                            System.out.println(DatabaseInfo.get(i));
+                        }
                         break;
                     case 4:
                         System.out.println();
@@ -392,6 +397,9 @@ public class Kenneth {
                         ExecuteQuery(Cypher2);
                         System.out.println(AcademicPreparation);
                         break;
+                        
+                    case 5:
+                        break;
                     default:
                         System.out.println("None Changed.");
                         break;
@@ -431,7 +439,7 @@ public class Kenneth {
                     case 2:
                         break;
                     case 3:
-
+                        
                         break;
                     default:
                         System.out.println("Dato Invalido");
