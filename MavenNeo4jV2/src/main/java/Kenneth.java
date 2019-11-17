@@ -35,7 +35,8 @@ public class Kenneth {
             System.out.println("1. New Solicitant Person.");
             System.out.println("2. New Solicitant Company.");
             System.out.println("3. Exisiting Company.");
-            System.out.println("4. Manage applicants.");
+            System.out.println("4. Existing Person.");
+            System.out.println("5. Job Match.");
             int entry = IntEntry();
             switch (entry) {
                 case 1:
@@ -45,7 +46,7 @@ public class Kenneth {
                     NewSolicitantCompany();
                     break;
                 case 3:
-
+                    ExistingCompany();
                     break;
 
                 case 4:
@@ -109,6 +110,76 @@ public class Kenneth {
         System.out.println();
 
     } //Creates a new Solicitant Company.
+
+    public void ExistingCompany() {
+        read = new Scanner(System.in);
+        System.out.println("Please enter your CIF:");
+        String CIF = read.nextLine();
+        boolean companyexists = CheckCIF(CIF); //Checks if the company is in the database.
+        if (companyexists) { //If the company exists log them into the menu
+            char resp = 's'; 
+            while (resp == 's' || resp == 'S') { //a While with user input tosimulte a menu for the Company Menu.
+                System.out.println();
+                System.out.println();
+                System.out.println();
+                System.out.println("**** Company Menu ******");
+                System.out.println("1. View Company Information.");
+                System.out.println("2. Modify Company Information.");
+                System.out.println("3. View Job Offers.");
+                System.out.println("3. Create New Job Offer.");
+                System.out.println("4. Modify Job Offers.");
+                int option = IntEntry();
+                switch (option) {
+                    case 1: 
+                        System.out.println("");
+                        ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (p:Company)\n" + "WHERE p.CIF = \"" + CIF + "\" Return p");
+                        System.out.println(DatabaseRequest.size());
+                        for (int i = 0; i < DatabaseRequest.size(); i++) {
+                            System.out.println(DatabaseRequest);
+                        }
+                        break;
+                    case 2:
+                        System.out.println("");
+                        System.out.println("What Company information do you want to change?");
+                        System.out.println("1. Name");
+                        System.out.println("2. Address");
+                        System.out.println("3. Direction");
+                        System.out.println("4. None");
+                        int option2 = IntEntry();
+                        if (option2 == 2) {
+                            System.out.println("Please enter New Address:");
+                            String address = read.nextLine();
+                            ModifyAddressCIF(CIF, address);
+                        } else if (option2 == 3) {
+                            System.out.println("Please enter Director:");
+                            String Director = read.nextLine();
+                            ModifyDirectorCIF(CIF, Director);
+                        } else if (option2 == 1) {
+                            System.out.println("Please enter Name:");
+                            String name = read.nextLine();
+                            if(CheckName(name) == true){ 
+                                System.out.println("");
+                                System.out.println("Name is already taken.");
+                            } else {
+                                ModifyNameCIF(CIF, name);
+                            }
+                        }
+
+                        break;
+                    case 3:
+                        break;
+                    default:
+                        System.out.println("None Changed.");
+                        break;
+                }
+                System.out.println("Do you want to return to the Company Menu? [S/N]");
+                resp = read.nextLine().charAt(0);
+            } // While Block with user response for the Meny.
+        } else {
+            System.out.println("CIF Invalido.");
+        }
+
+    } // Logs into an existing company's information and requests new personnelle.
 
     public String CypherPersonCreator(String idNumber, String name, int age, String address, String phonenumber) {
         idNumber = "\"" + idNumber + "\"";
@@ -249,8 +320,8 @@ public class Kenneth {
         while (valid == false) {
             System.out.println("Please enter the Company Name:");
             temporal = read.nextLine();
-            ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (p:Company)\n"+ "WHERE p.Name = \""+temporal+"\" Return p");
-            if (DatabaseRequest.size() == 0){
+            ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (p:Company)\n" + "WHERE p.Name = \"" + temporal + "\" Return p");
+            if (DatabaseRequest.size() == 0) {
                 valid = true;
                 name = temporal;
             } else {
@@ -259,7 +330,7 @@ public class Kenneth {
                 valid = false;
             }
         } //Forcing the user to enter correct names.
-        
+
         return name;
     } //Requests the name for the company and verifies if it is unique
 
@@ -271,21 +342,73 @@ public class Kenneth {
         while (valid == false) {
             System.out.println("Please enter the CIF of the Company:");
             temporal = read.nextLine();
-            
-            ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (p:Company)\n"+ "WHERE p.CIF = \""+CIF+"\" Return p");
-            if(DatabaseRequest.size() == 0){
+
+            ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (p:Company)\n" + "WHERE p.CIF = \"" + CIF + "\" Return p");
+            if (DatabaseRequest.size() == 0) {
                 valid = true;
                 CIF = temporal;
             } else {
                 System.out.println();
                 System.out.println("CIF is already existent in our databases.");
                 valid = false;
-            } 
+            }
         } //Forcing the user to enter correct CIF.
 
         return CIF;
 
     } //Requests Company CIF, verifies it is unique.
+
+    public boolean CheckCIF(String CIF) {
+        boolean exists = false;
+        ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (p:Company)\n" + "WHERE p.CIF = \"" + CIF + "\" Return p");
+        if (DatabaseRequest.size() == 0) {
+            exists = false;
+        } else {
+            exists = true;
+        }
+        return exists;
+    } //Checks if the CIF parameter is of one the companies the database has registered.
+    
+    public boolean CheckName(String name){
+        boolean exists = false;
+        ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (p:Company)\n" + "WHERE p.Name = \"" + name + "\" Return p");
+        if(DatabaseRequest.size() == 0){
+            exists = false; 
+        } else {
+            exists = true;
+        }
+        return exists;
+    } //Checks if Name Exists in the database for companies that we have.
+    
+    public void ModifyNameCIF(String CIF, String name){
+        
+        String Cypher = "MATCH (a:Company )\n" +
+"Where a.CIF =  \""+CIF+"\"\n" +
+"set a.Name = \""+name+"\"";
+        ExecuteQuery(Cypher);
+        System.out.println("");
+        System.out.println("Task Completed");
+        
+    } //Modifies the Name of the Company with the CIF as give.
+    
+    public void ModifyAddressCIF(String CIF, String address){
+        String Cypher = "MATCH (a:Company )\n" +
+"Where a.CIF =  \""+CIF+"\"\n" +
+"set a.Address = \""+address+"\"";
+        ExecuteQuery(Cypher);
+        System.out.println("");
+        System.out.println("Task Completed");
+    } // Modifies the Address of the Company with the CIF as given
+    
+    public void ModifyDirectorCIF(String CIF, String Director){
+        String Cypher = "MATCH (a:Company )\n" +
+"Where a.CIF =  \""+CIF+"\"\n" +
+"set a.Director = \""+Director+"\"";
+        ExecuteQuery(Cypher);
+        System.out.println("");
+        System.out.println("Task Completed");
+        
+    }
 
     public static void ExecuteQuery(String query) {
         try {
