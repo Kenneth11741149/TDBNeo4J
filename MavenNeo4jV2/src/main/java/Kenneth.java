@@ -230,6 +230,26 @@ public class Kenneth {
                         int Salary = IntEntry();
                         System.out.println("Please enter Job Conditions:");
                         String Conditions = read.nextLine();
+                        System.out.println("Please enter Contract Type");
+                        System.out.println("1. Temporal");
+                        System.out.println("2. Permanent");
+                        int Contract = LimitedIntEntry(1, 2);
+                        String ContractType = "";
+                        if (Contract == 1) {
+                            ContractType = "Temporal";
+                        } else if (Contract == 2) {
+                            ContractType = "Permanent";
+                        }
+                        System.out.println("Please enter Daily Schedule Type");
+                        System.out.println("1. PartTime");
+                        System.out.println("2. FullTime");
+                        int Scheduleresp = LimitedIntEntry(1, 2);
+                        String Schedule = "";
+                        if (Scheduleresp == 1) {
+                            Schedule = "PartTime";
+                        } else if (Scheduleresp == 2) {
+                            Schedule = "FullTime";
+                        }
                         System.out.println("*******Personal Requisites**********");
                         System.out.println("Minimum age requiered: (Of course above 18 and below 100)");
                         System.out.println("1. Specify.");
@@ -319,7 +339,30 @@ public class Kenneth {
                         }
 
                         /////
-                        
+                        System.out.println();
+                        System.out.println("*****What are the academic Requirements for this Job?");
+                        System.out.println("1. Middle School or below");
+                        System.out.println("2. High School or below");
+                        System.out.println("3. University and above.");
+                        int initialresponse = LimitedIntEntry(1, 3);
+                        ArrayList<String> carreers;
+                        String AcademicPreparation = "";
+                        if (initialresponse == 3) {
+                            carreers = CarreersIntToString(GetUserCarreers());
+                            for (int i = 0; i < carreers.size(); i++) {
+                                if (i < carreers.size() - 1) {
+                                    AcademicPreparation += carreers.get(i).toString() + ",";
+                                } else {
+                                    AcademicPreparation += carreers.get(i).toString();
+                                }
+                            }
+                            System.out.println(AcademicPreparation);
+                        } else if (initialresponse == 1) {
+                            AcademicPreparation = "Middle School or below.";
+                        } else if (initialresponse == 2) {
+                            AcademicPreparation = "High School or below.";
+                        }
+
                         /////
                         System.out.println();
                         System.out.println("Experience in the area?");
@@ -336,6 +379,18 @@ public class Kenneth {
                             Experience = "Not Important";
                         }
 
+                        System.out.println("Schedule "+Schedule);
+                                
+                        System.out.println("How many spots are available for this Job? ");
+                        int JobSpots = IntEntry();
+
+                        String Cypher = CypherJobOfferCreator(CIF, JobDescription, ContractType, Schedule, JobAddress, Salary, Conditions, AgeRequierement, HealthHistory, PhysicalHistory, MentalHistory, MilitaryHistory, LawHistory, Experience, JobSpots, AcademicPreparation);
+                        System.out.println(Cypher);
+                        ExecuteQuery(Cypher);
+                        String Cypher2 = CypherJobOfferRelationShipCreator(CIF, JobDescription,ContractType, Schedule, JobAddress, Salary, Conditions, AgeRequierement, HealthHistory, PhysicalHistory, MentalHistory, MilitaryHistory, LawHistory, Experience, JobSpots, AcademicPreparation);
+                        System.out.println(Cypher2);
+                        ExecuteQuery(Cypher2);
+                        System.out.println(AcademicPreparation);
                         break;
                     default:
                         System.out.println("None Changed.");
@@ -364,8 +419,9 @@ public class Kenneth {
                 System.out.println("***** Person Menu *****");
                 System.out.println("1. View Personal Information.");
                 System.out.println("2. Modify Personal Information.");
-                System.out.println(" Enter your response [1,2]");
-                int response = LimitedIntEntry(1, 2);
+                System.out.println("3. Create new Job Request.");
+                System.out.println(" Enter your response [1 to 3]");
+                int response = LimitedIntEntry(1, 3);
                 switch (response) {
                     case 1:
                         String PersonalDetails = ExecuteRequestQuery("MATCH (p:Person)\n" + "WHERE p.idNumber = \"" + idNumber + "\"\n" + "RETURN p").toString();
@@ -373,6 +429,9 @@ public class Kenneth {
                         System.out.println(PersonalDetails);
                         break;
                     case 2:
+                        break;
+                    case 3:
+
                         break;
                     default:
                         System.out.println("Dato Invalido");
@@ -415,7 +474,8 @@ public class Kenneth {
         return Cypher;
     } //Creates the Cypher SQL Statement for the creation of a Company, given the information.
 
-    public String CypherJobOfferCreator(String JobDescription, String JobAddress, int Salary, String conditions, int AgeRequirement, String HealthHistory, String PhysicalHistory, String MentalHistory, String MilitaryHistory, String LawResponse, String Experience) {
+    public String CypherJobOfferCreator(String CIF, String JobDescription, String ContractType, String Schedule, String JobAddress, int Salary, String conditions, int AgeRequirement, String HealthHistory, String PhysicalHistory, String MentalHistory, String MilitaryHistory, String LawResponse, String Experience, int JobSpots, String AcademicPreparation) {
+        CIF = "\"" + CIF + "\"";
         String Cypher = "";
         JobDescription = "\"" + JobDescription + "\"";
         JobAddress = "\"" + JobAddress + "\"";
@@ -426,12 +486,35 @@ public class Kenneth {
         MilitaryHistory = "\"" + MilitaryHistory + "\"";
         LawResponse = "\"" + LawResponse + "\"";
         Experience = "\"" + Experience + "\"";
-        
-        Cypher = "CREATE (a:JobOffer{JobDescription : " + JobDescription + ", JobAddress : " + JobAddress + ", Salary : " + Salary + ", Conditions :" + conditions + ", AgeRequirement : " + AgeRequirement + ", HealthHistory : " + HealthHistory + ", PhysicalHistory :" + PhysicalHistory + ", MentalHistory : " + MentalHistory + ", MilitaryHistory : " + MilitaryHistory + ", LawResponse :" + LawResponse+", Experience : "+Experience+"})";
-        
-        
+        AcademicPreparation = "\"" + AcademicPreparation + "\"";
+        ContractType = "\"" + ContractType + "\"";
+        Schedule = "\"" + Schedule + "\"";
+
+        Cypher = "CREATE (a:JobOffer{CompanyCIF : " + CIF + ", JobDescription : " + JobDescription + ", ContractType : " + ContractType + ", Schedule : " + Schedule + ", JobAddress : " + JobAddress + ", Salary : " + Salary + ", Conditions :" + conditions + ", AgeRequirement : " + AgeRequirement + ", HealthHistory : " + HealthHistory + ", PhysicalHistory :" + PhysicalHistory + ", MentalHistory : " + MentalHistory + ", MilitaryHistory : " + MilitaryHistory + ", LawResponse :" + LawResponse + ", Experience : " + Experience + ", JobSpots :" + JobSpots + ", AcademicRequirements :" + AcademicPreparation + "})";
+
         return Cypher;
     } // Creates the Cypher SQL statement for the creation of a Job offer, given the information. 
+
+    public String CypherJobOfferRelationShipCreator(String CIF, String JobDescription, String ContractType, String Schedule, String JobAddress, int Salary, String conditions, int AgeRequirement, String HealthHistory, String PhysicalHistory, String MentalHistory, String MilitaryHistory, String LawResponse, String Experience, int JobSpots, String AcademicPreparation) {
+        String CIF2 = CIF;
+        CIF = "\"" + CIF + "\"";
+        JobDescription = "\"" + JobDescription + "\"";
+        JobAddress = "\"" + JobAddress + "\"";
+        conditions = "\"" + conditions + "\"";
+        HealthHistory = "\"" + HealthHistory + "\"";
+        PhysicalHistory = "\"" + PhysicalHistory + "\"";
+        MentalHistory = "\"" + MentalHistory + "\"";
+        MilitaryHistory = "\"" + MilitaryHistory + "\"";
+        LawResponse = "\"" + LawResponse + "\"";
+        Experience = "\"" + Experience + "\"";
+        ContractType = "\"" + ContractType + "\"";
+        Schedule = "\"" + Schedule + "\"";
+        AcademicPreparation = "\""+AcademicPreparation+"\"";
+        String Cypher = "MATCH (a:Company),(b:JobOffer)\n"
+                + "WHERE a.CIF = \"" + CIF2 + "\" AND b.CompanyCIF = " + CIF + " AND b.JobDescription = " + JobDescription + " AND b.ContractType = " + ContractType +" AND b.Schedule = "+Schedule+ " AND b.JobAddress = " + JobAddress + " AND b.Salary = " + Salary + " AND b.Conditions =" + conditions + " AND b.AgeRequirement = " + AgeRequirement + " AND b.HealthHistory = " + HealthHistory + " AND b.PhysicalHistory =" + PhysicalHistory + " AND b.MentalHistory = " + MentalHistory + " AND b.MilitaryHistory = " + MilitaryHistory + " AND b.LawResponse =" + LawResponse + " AND b.Experience = " + Experience + " AND b.JobSpots =" + JobSpots + " AND b.AcademicRequirements =" + AcademicPreparation + "\n"
+                + "CREATE (a)-[r:Offers]->(b)";
+        return Cypher;
+    }
 
     public String RequestNationalIdentification() {
         ///////////////////       IMPORTANT
