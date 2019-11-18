@@ -434,8 +434,24 @@ public class Kenneth {
                         System.out.println();
                         System.out.println("");
                         String careerCompare= RequestPersonCareer(idNumber);
-                        ArrayList<String> jobRecommendations  = new ArrayList<String>();
+                        ArrayList<String> jobRecommendationsUser  = new ArrayList<String>();
+                        jobRecommendationsUser = jobRecommendations(careerCompare);
+                        ArrayList<String> jobCIF  = new ArrayList<String>();
+                        ArrayList<String> jobSalaryG  = new ArrayList<String>();
+                        ArrayList<String> jobSchedule  = new ArrayList<String>();
                         
+                        //Divided per Attribute, consumes more resource than the necessary
+                        jobCIF= jobCIFGETTER(careerCompare);
+                        jobSalaryG=jobSalary(careerCompare);
+                        jobSchedule=jobTime(careerCompare);
+                        System.out.println("Data acquired");
+                        System.out.println("");
+                        System.out.println("");
+                        System.out.println("Potential Jobs");
+                        for (int i = 0; i < jobRecommendationsUser.size(); i++) {
+                            
+                            System.out.println(i+": "+jobRecommendationsUser.get(i)+" salary: LPS."+jobSalaryG+" Schedule "+jobSchedule);
+                        }
 
 
                         break;
@@ -705,18 +721,68 @@ public class Kenneth {
         ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (p:Person)\n" + "WHERE p.idNumber = \"" + id + "\" Return p.AcademicPreparation");
         for (int i = 0; i < DatabaseRequest.size(); i++) {
             career+=String.valueOf(DatabaseRequest.get(i));
-            if (i+1!=DatabaseRequest.size()) {
-                career+=",";
-            }
+            //if (i+1!=DatabaseRequest.size()) {
+            //    career+=",";
+            //}
         }
         return career;
     }//Gets the person's career
     
     public ArrayList<String> jobRecommendations(String careerMatch){
-        ArrayList<String> possibleJobs = new ArrayList<String>();
+        //System.out.println(careerMatch);
+   
         
+        ArrayList<String> possibleJobs = new ArrayList<String>();
+        ArrayList DatabaseJobSimilarities  = ExecuteRequestQuery("MATCH (p:JobOffer)\n" + "WHERE p.AcademicRequirements = \"" + careerMatch + "\" "
+                + "Return p.JobDescription");
+        for (int i = 0; i < DatabaseJobSimilarities.size(); i++) {
+            //System.out.println(DatabaseJobSimilarities.get(i));
+            possibleJobs.add(String.valueOf(DatabaseJobSimilarities.get(i)));
+        }
         return possibleJobs;
     }//Used for the job requests
+    
+    public ArrayList<String> jobCIFGETTER(String careerMatch){
+        //System.out.println(careerMatch);
+   
+        
+        ArrayList<String> possibleJobs = new ArrayList<String>();
+        ArrayList DatabaseJobSimilarities  = ExecuteRequestQuery("MATCH (p:JobOffer)\n" + "WHERE p.AcademicRequirements = \"" + careerMatch + "\" "
+                + "Return p.CompanyCIF");
+        for (int i = 0; i < DatabaseJobSimilarities.size(); i++) {
+            //System.out.println(DatabaseJobSimilarities.get(i));
+            possibleJobs.add(String.valueOf(DatabaseJobSimilarities.get(i)));
+        }
+        return possibleJobs;
+    }
+    
+    public ArrayList<String> jobSalary(String careerMatch){
+        //System.out.println(careerMatch);
+   
+        
+        ArrayList<String> possibleJobs = new ArrayList<String>();
+        ArrayList DatabaseJobSimilarities  = ExecuteRequestQuery("MATCH (p:JobOffer)\n" + "WHERE p.AcademicRequirements = \"" + careerMatch + "\" "
+                + "Return p.Salary");
+        for (int i = 0; i < DatabaseJobSimilarities.size(); i++) {
+            //System.out.println(DatabaseJobSimilarities.get(i));
+            possibleJobs.add(String.valueOf(DatabaseJobSimilarities.get(i)));
+        }
+        return possibleJobs;
+    }
+
+    public ArrayList<String> jobTime(String careerMatch){
+        //System.out.println(careerMatch);
+   
+        
+        ArrayList<String> possibleJobs = new ArrayList<String>();
+        ArrayList DatabaseJobSimilarities  = ExecuteRequestQuery("MATCH (p:JobOffer)\n" + "WHERE p.AcademicRequirements = \"" + careerMatch + "\" "
+                + "Return p.Schedule");
+        for (int i = 0; i < DatabaseJobSimilarities.size(); i++) {
+            //System.out.println(DatabaseJobSimilarities.get(i));
+            possibleJobs.add(String.valueOf(DatabaseJobSimilarities.get(i)));
+        }
+        return possibleJobs;
+    }
 
     public boolean CheckCIF(String CIF) {
         boolean exists = false;
