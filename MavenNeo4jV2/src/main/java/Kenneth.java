@@ -214,11 +214,6 @@ public class Kenneth {
 
                         break;
                     case 3:
-                        ArrayList DatabaseInfo = ExecuteRequestQuery("MATCH (p:JobOffer)\n" + "WHERE p.CompanyCIF = \"" + CIF + "\" Return p");
-                        System.out.println("");
-                        for (int i = 0; i < DatabaseInfo.size(); i++) {
-                            System.out.println(DatabaseInfo.get(i));
-                        }
                         break;
                     case 4:
                         System.out.println();
@@ -383,21 +378,18 @@ public class Kenneth {
                             Experience = "Not Important";
                         }
 
-                        System.out.println("Schedule " + Schedule);
-
+                        System.out.println("Schedule "+Schedule);
+                                
                         System.out.println("How many spots are available for this Job? ");
                         int JobSpots = IntEntry();
 
                         String Cypher = CypherJobOfferCreator(CIF, JobDescription, ContractType, Schedule, JobAddress, Salary, Conditions, AgeRequierement, HealthHistory, PhysicalHistory, MentalHistory, MilitaryHistory, LawHistory, Experience, JobSpots, AcademicPreparation);
                         System.out.println(Cypher);
                         ExecuteQuery(Cypher);
-                        String Cypher2 = CypherJobOfferRelationShipCreator(CIF, JobDescription, ContractType, Schedule, JobAddress, Salary, Conditions, AgeRequierement, HealthHistory, PhysicalHistory, MentalHistory, MilitaryHistory, LawHistory, Experience, JobSpots, AcademicPreparation);
+                        String Cypher2 = CypherJobOfferRelationShipCreator(CIF, JobDescription,ContractType, Schedule, JobAddress, Salary, Conditions, AgeRequierement, HealthHistory, PhysicalHistory, MentalHistory, MilitaryHistory, LawHistory, Experience, JobSpots, AcademicPreparation);
                         System.out.println(Cypher2);
                         ExecuteQuery(Cypher2);
                         System.out.println(AcademicPreparation);
-                        break;
-
-                    case 5:
                         break;
                     default:
                         System.out.println("None Changed.");
@@ -438,6 +430,13 @@ public class Kenneth {
                     case 2:
                         break;
                     case 3:
+                        System.out.println("Accessing data..");
+                        System.out.println();
+                        System.out.println("");
+                        String careerCompare= RequestPersonCareer(idNumber);
+                        ArrayList<String> jobRecommendations  = new ArrayList<String>();
+                        
+
 
                         break;
                     default:
@@ -516,9 +515,9 @@ public class Kenneth {
         Experience = "\"" + Experience + "\"";
         ContractType = "\"" + ContractType + "\"";
         Schedule = "\"" + Schedule + "\"";
-        AcademicPreparation = "\"" + AcademicPreparation + "\"";
+        AcademicPreparation = "\""+AcademicPreparation+"\"";
         String Cypher = "MATCH (a:Company),(b:JobOffer)\n"
-                + "WHERE a.CIF = \"" + CIF2 + "\" AND b.CompanyCIF = " + CIF + " AND b.JobDescription = " + JobDescription + " AND b.ContractType = " + ContractType + " AND b.Schedule = " + Schedule + " AND b.JobAddress = " + JobAddress + " AND b.Salary = " + Salary + " AND b.Conditions =" + conditions + " AND b.AgeRequirement = " + AgeRequirement + " AND b.HealthHistory = " + HealthHistory + " AND b.PhysicalHistory =" + PhysicalHistory + " AND b.MentalHistory = " + MentalHistory + " AND b.MilitaryHistory = " + MilitaryHistory + " AND b.LawResponse =" + LawResponse + " AND b.Experience = " + Experience + " AND b.JobSpots =" + JobSpots + " AND b.AcademicRequirements =" + AcademicPreparation + "\n"
+                + "WHERE a.CIF = \"" + CIF2 + "\" AND b.CompanyCIF = " + CIF + " AND b.JobDescription = " + JobDescription + " AND b.ContractType = " + ContractType +" AND b.Schedule = "+Schedule+ " AND b.JobAddress = " + JobAddress + " AND b.Salary = " + Salary + " AND b.Conditions =" + conditions + " AND b.AgeRequirement = " + AgeRequirement + " AND b.HealthHistory = " + HealthHistory + " AND b.PhysicalHistory =" + PhysicalHistory + " AND b.MentalHistory = " + MentalHistory + " AND b.MilitaryHistory = " + MilitaryHistory + " AND b.LawResponse =" + LawResponse + " AND b.Experience = " + Experience + " AND b.JobSpots =" + JobSpots + " AND b.AcademicRequirements =" + AcademicPreparation + "\n"
                 + "CREATE (a)-[r:Offers]->(b)";
         return Cypher;
     }
@@ -699,6 +698,25 @@ public class Kenneth {
         return CIF;
 
     } //Requests Company CIF, verifies it is unique.
+    
+    public String RequestPersonCareer(String id){
+        String career="";
+        
+        ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (p:Person)\n" + "WHERE p.idNumber = \"" + id + "\" Return p.AcademicPreparation");
+        for (int i = 0; i < DatabaseRequest.size(); i++) {
+            career+=String.valueOf(DatabaseRequest.get(i));
+            if (i+1!=DatabaseRequest.size()) {
+                career+=",";
+            }
+        }
+        return career;
+    }//Gets the person's career
+    
+    public ArrayList<String> jobRecommendations(String careerMatch){
+        ArrayList<String> possibleJobs = new ArrayList<String>();
+        
+        return possibleJobs;
+    }//Used for the job requests
 
     public boolean CheckCIF(String CIF) {
         boolean exists = false;
@@ -878,13 +896,5 @@ public class Kenneth {
 
     } //Execute a query that requests information from the database.
 
-    public ArrayList WorkType(String Type) {
-
-        ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (p:JobOffer)\n" + "WHERE p.JobDescription = \"" + Type + "\"\n" + "RETURN p");
-        for (int i = 0; i < DatabaseRequest.size(); i++) {
-            System.out.println(DatabaseRequest.get(i));
-        }
-        return DatabaseRequest;
-    }
-
 }
+
