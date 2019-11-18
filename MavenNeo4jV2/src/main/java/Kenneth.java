@@ -223,14 +223,13 @@ public class Kenneth {
                     	String continueContracts="1";
                     	while(continueContracts=="1"){
                     		int limit=0;
+                                ArrayList<String> userName= new ArrayList();
                     		for(int i=0; i<idApplicants.size(); i++){
                     			limit=i;
-                    			String userName="";
                                         String useless = idApplicants.get(i);
                     			userName = ExecuteRequestQuery("MATCH (p:Person)\n" +"WHERE p.idNumber = \""+useless+ "\" "
                     				+ "Return p.Name");
-                                        
-                    			System.out.println(i+" "+idApplicants.get(i)+" "+userName);
+                    			System.out.println(i+" "+idApplicants.get(i)+" "+userName.get(i));
                     		}
                     		System.out.println("Do you wish to hire any of the following personnel?");
                     		System.out.println("1/ Yes");
