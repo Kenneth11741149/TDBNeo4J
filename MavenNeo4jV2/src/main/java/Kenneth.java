@@ -455,7 +455,7 @@ public class Kenneth {
                         }
                         String ContinueAdding="1";
                         int jobSelect;
-                        while(ContinueAdding=="2"){
+                        while(ContinueAdding=="1"){
                             System.out.println("Select a job you like to apply: ");
                             System.out.println("0-"+counter);
                             jobSelect=read.nextInt();
@@ -463,6 +463,10 @@ public class Kenneth {
                             addQueryCypher = CypherJobRequestCreator(jobCIF.get(jobSelect), idNumber, jobRecommendationsUser.get(counter)
                                     , jobSalaryG.get(counter), jobSchedule.get(counter));
                             ExecuteQuery(addQueryCypher);
+                            String addRelationQuery="";
+                            addRelationQuery=CypherJobRequestRelationShipCreator(jobCIF.get(jobSelect), idNumber, jobRecommendationsUser.get(counter)
+                                    , jobSalaryG.get(counter), jobSchedule.get(counter));
+                            ExecuteQuery(addRelationQuery);
                             System.out.println("");
                             System.out.println("Continue applying? 1/ Yes, 2/No");
                             ContinueAdding=read.nextLine();
@@ -572,7 +576,7 @@ public class Kenneth {
         Schedule = "\"" + Schedule + "\"";
         CypherQuery="MATCH (a:Company), (b:JobRequest), (c:Person)\n"
                 + "WHERE a.CIF = "+CIF+" AND b.CompanyCIF = "+CIF+ " AND c.idNumber ="+userID+" AND b.jobDescription ="+jobType+" AND b.jobSalary ="+Salary+" AND b.jobSchedule ="+Schedule+ "\n"
-                + "CREATE (a)-[r:getRequested]->(b)-[s:request]->(c)";
+                + "CREATE (a)-[r:askedAbout]->(b)-[s:by]->(c)";
         return CypherQuery;
     }
 
