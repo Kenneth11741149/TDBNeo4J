@@ -1,4 +1,3 @@
-
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -384,20 +383,20 @@ public class Kenneth {
                             Experience = "Not Important";
                         }
 
-                        System.out.println("Schedule "+Schedule);
-                                
+                        System.out.println("Schedule " + Schedule);
+
                         System.out.println("How many spots are available for this Job? ");
                         int JobSpots = IntEntry();
 
                         String Cypher = CypherJobOfferCreator(CIF, JobDescription, ContractType, Schedule, JobAddress, Salary, Conditions, AgeRequierement, HealthHistory, PhysicalHistory, MentalHistory, MilitaryHistory, LawHistory, Experience, JobSpots, AcademicPreparation);
                         System.out.println(Cypher);
                         ExecuteQuery(Cypher);
-                        String Cypher2 = CypherJobOfferRelationShipCreator(CIF, JobDescription,ContractType, Schedule, JobAddress, Salary, Conditions, AgeRequierement, HealthHistory, PhysicalHistory, MentalHistory, MilitaryHistory, LawHistory, Experience, JobSpots, AcademicPreparation);
+                        String Cypher2 = CypherJobOfferRelationShipCreator(CIF, JobDescription, ContractType, Schedule, JobAddress, Salary, Conditions, AgeRequierement, HealthHistory, PhysicalHistory, MentalHistory, MilitaryHistory, LawHistory, Experience, JobSpots, AcademicPreparation);
                         System.out.println(Cypher2);
                         ExecuteQuery(Cypher2);
                         System.out.println(AcademicPreparation);
                         break;
-                        
+
                     case 5:
                         break;
                     default:
@@ -439,7 +438,7 @@ public class Kenneth {
                     case 2:
                         break;
                     case 3:
-                        
+
                         break;
                     default:
                         System.out.println("Dato Invalido");
@@ -517,9 +516,9 @@ public class Kenneth {
         Experience = "\"" + Experience + "\"";
         ContractType = "\"" + ContractType + "\"";
         Schedule = "\"" + Schedule + "\"";
-        AcademicPreparation = "\""+AcademicPreparation+"\"";
+        AcademicPreparation = "\"" + AcademicPreparation + "\"";
         String Cypher = "MATCH (a:Company),(b:JobOffer)\n"
-                + "WHERE a.CIF = \"" + CIF2 + "\" AND b.CompanyCIF = " + CIF + " AND b.JobDescription = " + JobDescription + " AND b.ContractType = " + ContractType +" AND b.Schedule = "+Schedule+ " AND b.JobAddress = " + JobAddress + " AND b.Salary = " + Salary + " AND b.Conditions =" + conditions + " AND b.AgeRequirement = " + AgeRequirement + " AND b.HealthHistory = " + HealthHistory + " AND b.PhysicalHistory =" + PhysicalHistory + " AND b.MentalHistory = " + MentalHistory + " AND b.MilitaryHistory = " + MilitaryHistory + " AND b.LawResponse =" + LawResponse + " AND b.Experience = " + Experience + " AND b.JobSpots =" + JobSpots + " AND b.AcademicRequirements =" + AcademicPreparation + "\n"
+                + "WHERE a.CIF = \"" + CIF2 + "\" AND b.CompanyCIF = " + CIF + " AND b.JobDescription = " + JobDescription + " AND b.ContractType = " + ContractType + " AND b.Schedule = " + Schedule + " AND b.JobAddress = " + JobAddress + " AND b.Salary = " + Salary + " AND b.Conditions =" + conditions + " AND b.AgeRequirement = " + AgeRequirement + " AND b.HealthHistory = " + HealthHistory + " AND b.PhysicalHistory =" + PhysicalHistory + " AND b.MentalHistory = " + MentalHistory + " AND b.MilitaryHistory = " + MilitaryHistory + " AND b.LawResponse =" + LawResponse + " AND b.Experience = " + Experience + " AND b.JobSpots =" + JobSpots + " AND b.AcademicRequirements =" + AcademicPreparation + "\n"
                 + "CREATE (a)-[r:Offers]->(b)";
         return Cypher;
     }
@@ -878,5 +877,14 @@ public class Kenneth {
         }
 
     } //Execute a query that requests information from the database.
+
+    public ArrayList WorkType(String Type) {
+
+        ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (p:JobOffer)\n" + "WHERE p.JobDescription = \"" + Type + "\"\n" + "RETURN p");
+        for (int i = 0; i < DatabaseRequest.size(); i++) {
+            System.out.println(DatabaseRequest.get(i));
+        }
+        return DatabaseRequest;
+    }
 
 }
