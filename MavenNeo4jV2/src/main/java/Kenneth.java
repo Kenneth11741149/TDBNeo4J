@@ -172,7 +172,7 @@ public class Kenneth {
                 System.out.println("**** Company Menu ******");
                 System.out.println("1. View Company Information.");
                 System.out.println("2. Modify Company Information.");
-                System.out.println("3. View Job Offers.");
+                System.out.println("3. View Job Applicants");
                 System.out.println("4. Create New Job Offer.");
                 System.out.println("5. Modify Job Offers.");
                 int option = IntEntry();
@@ -214,6 +214,43 @@ public class Kenneth {
 
                         break;
                     case 3:
+                    	//Watch all interest people on the jobs
+                    	System.out.println();
+                    	System.out.println();
+                    	System.out.println("Applicants");
+                    	ArrayList<String> idApplicants=new ArrayList<String>();
+                    	idApplicants= peopleRequestingJobs(CIF);
+                    	String continueContracts="1";
+                    	while(continueContracts=="1"){
+                    		int limit=0;
+                    		for(int i =0; idApplicants.size(); i++){
+                    			limit=i;
+                    			String userName="";
+                    			userName = ExecuteRequestQuery("MATCH (p:Person)\n" +"WHERE p.idNumber = \""+idApplicants.get(i)+ "\" "
+                    				+ "Return p.Name");
+                    			System.out.println(i+" "+idApplicants.get(i)+" "+userName);
+                    		}
+                    		System.out.println("Do you wish to hire any of the following personnel?");
+                    		System.out.println("1/ Yes");
+                    		System.out.println("2/ No");
+                    		int decision = IntEntry();
+                    		if(decision==1){
+                    			System.out.println("Which one will you like to choose? [0 -"+limit+"]");
+                    			int selectedPersonnel = LimitedIntEntry(0, limit);
+                    			String idSelected = idApplicants.get(selectedPersonnel);
+                    			String queryHire = CypherPersonContractCompanyRelationShipCreator(CIF, idSelected);
+
+                    			//Deleters for Nodes and relationships
+                    			String deleteRelationShip = CypherDeleteRelationShipRequest(CIF, idSelected);
+                    			ExecuteQuery(deleteRelationShip);
+                    			String deleteNode = CypherdeleteRequestNode(idSelected);
+                    			ExecuteQuery(deleteRelationShip)
+                    			continueContracts="Negative";
+                    		}else{
+                    			continueContracts="Negative";
+                    		}
+
+                    	}
                         break;
                     case 4:
                         System.out.println();
@@ -576,8 +613,36 @@ public class Kenneth {
         Schedule = "\"" + Schedule + "\"";
         CypherQuery="MATCH (a:Company), (b:JobRequest), (c:Person)\n"
                 + "WHERE a.CIF = "+CIF+" AND b.CompanyCIF = "+CIF+ " AND c.idNumber ="+userID+" AND b.jobDescription ="+jobType+" AND b.jobSalary ="+Salary+" AND b.jobSchedule ="+Schedule+ "\n"
-                + "CREATE (a)-[r:askedAbout]->(b)-[s:by]->(c)";
+                + "CREATE (a)-[r:getRequested]->(b)-[s:request]->(c)";
         return CypherQuery;
+    }
+
+    public String CypherPersonContractCompanyRelationShipCreator(String CIF, String userID){
+    	String CypherQuery="";
+    	CIF = "\"" + CIF + "\"";
+    	userID = "\"" + userID + "\"";
+    	CypherQuery="MATCH (a:Company), (p:Person)\n"
+    		+"WHERE a.CIF ="+CIF+" AND p.idNumber = "+ userID+"\n"+
+    		+ "CREATE (a)-[r:Hired]->(p)";
+    	return CypherQuery;
+
+    }
+
+    public String CypherDeleteRelationShipRequest(String CIF, String userID){
+    	//
+    	String CypherQuery="";
+    	CIF = "\"" + CIF + "\"";
+    	userID = "\"" + userID + "\"";
+    	CypherQuery="MATCH (:Person{idNumber: "+userID+"}) -[r:request]-(:JobRequest)-[s:getRequested]-(:Company{CIF: "+CIF+"}) DELETE r, s";
+    	return CypherQuery;
+    }
+
+    public String CypherdeleteRequestNode(String userID){
+    	String CypherQuery="";
+    	CIF = "\"" + CIF + "\"";
+    	userID = "\"" + userID + "\"";
+    	CypherQuery="MATCH (:JobRequest{IDPerson: "+userID+"}) Delete n";
+    	return CypherQuery;
     }
 
     public String RequestNationalIdentification() {
@@ -630,6 +695,17 @@ public class Kenneth {
         } //While it is an invalid Entry for the ID number, keep forcing the user to enter it correctly.
         return IdentificationNumber;
     } //Method to request Idenfication Number, verifies that is unique.
+
+    public ArrayList<String> peopleRequestingJobs(String CIF){
+    	ArrayList<String> idSubjects = new ArrayList<String>();
+    	ArrayList DatabaseRequest = ExecuteRequestQuery("MATCH (r:JobRequest)\n"+ "WHERE r.CompanyCIF = \""+ CIF +"\" "
+    		+ "Return r.IDPerson");
+    	for (int i = 0; i<DatabaseRequest.size();i++ ) {
+    		idSubjects.add(String.valueOf(DatabaseRequest.get(i)));
+    	}
+    	return idSubjects;
+
+    }//Verifies all applicants according to an enterprise CIF
 
     public int LimitedIntEntry(int LowerLimit, int HigherLimit) {
         int entry = 0;
