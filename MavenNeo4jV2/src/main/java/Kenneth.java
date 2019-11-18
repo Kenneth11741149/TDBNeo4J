@@ -223,11 +223,13 @@ public class Kenneth {
                     	String continueContracts="1";
                     	while(continueContracts=="1"){
                     		int limit=0;
-                    		for(int i =0; idApplicants.size(); i++){
+                    		for(int i=0; i<idApplicants.size(); i++){
                     			limit=i;
                     			String userName="";
-                    			userName = ExecuteRequestQuery("MATCH (p:Person)\n" +"WHERE p.idNumber = \""+idApplicants.get(i)+ "\" "
+                                        String useless = idApplicants.get(i);
+                    			userName = ExecuteRequestQuery("MATCH (p:Person)\n" +"WHERE p.idNumber = \""+useless+ "\" "
                     				+ "Return p.Name");
+                                        
                     			System.out.println(i+" "+idApplicants.get(i)+" "+userName);
                     		}
                     		System.out.println("Do you wish to hire any of the following personnel?");
@@ -244,7 +246,7 @@ public class Kenneth {
                     			String deleteRelationShip = CypherDeleteRelationShipRequest(CIF, idSelected);
                     			ExecuteQuery(deleteRelationShip);
                     			String deleteNode = CypherdeleteRequestNode(idSelected);
-                    			ExecuteQuery(deleteRelationShip)
+                    			ExecuteQuery(deleteRelationShip);
                     			continueContracts="Negative";
                     		}else{
                     			continueContracts="Negative";
@@ -622,7 +624,7 @@ public class Kenneth {
     	CIF = "\"" + CIF + "\"";
     	userID = "\"" + userID + "\"";
     	CypherQuery="MATCH (a:Company), (p:Person)\n"
-    		+"WHERE a.CIF ="+CIF+" AND p.idNumber = "+ userID+"\n"+
+    		+"WHERE a.CIF ="+CIF+" AND p.idNumber = "+ userID+"\n"
     		+ "CREATE (a)-[r:Hired]->(p)";
     	return CypherQuery;
 
@@ -639,7 +641,6 @@ public class Kenneth {
 
     public String CypherdeleteRequestNode(String userID){
     	String CypherQuery="";
-    	CIF = "\"" + CIF + "\"";
     	userID = "\"" + userID + "\"";
     	CypherQuery="MATCH (:JobRequest{IDPerson: "+userID+"}) Delete n";
     	return CypherQuery;
