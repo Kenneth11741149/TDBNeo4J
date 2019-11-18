@@ -448,12 +448,26 @@ public class Kenneth {
                         System.out.println("");
                         System.out.println("");
                         System.out.println("Potential Jobs");
+                        int counter=0;
                         for (int i = 0; i < jobRecommendationsUser.size(); i++) {
-                            
+                            counter=i;
                             System.out.println(i+": "+jobRecommendationsUser.get(i)+" salary: LPS."+jobSalaryG+" Schedule "+jobSchedule);
                         }
-
-
+                        String ContinueAdding="1";
+                        int jobSelect;
+                        while(ContinueAdding=="2"){
+                            System.out.println("Select a job you like to apply: ");
+                            System.out.println("0-"+counter);
+                            jobSelect=read.nextInt();
+                            String addQueryCypher="";
+                            addQueryCypher = CypherJobRequestCreator(jobCIF.get(jobSelect), idNumber, jobRecommendationsUser.get(counter)
+                                    , jobSalaryG.get(counter), jobSchedule.get(counter));
+                            ExecuteQuery(addQueryCypher);
+                            System.out.println("");
+                            System.out.println("Continue applying? 1/ Yes, 2/No");
+                            ContinueAdding=read.nextLine();
+                            
+                        }
                         break;
                     default:
                         System.out.println("Dato Invalido");
@@ -536,6 +550,30 @@ public class Kenneth {
                 + "WHERE a.CIF = \"" + CIF2 + "\" AND b.CompanyCIF = " + CIF + " AND b.JobDescription = " + JobDescription + " AND b.ContractType = " + ContractType +" AND b.Schedule = "+Schedule+ " AND b.JobAddress = " + JobAddress + " AND b.Salary = " + Salary + " AND b.Conditions =" + conditions + " AND b.AgeRequirement = " + AgeRequirement + " AND b.HealthHistory = " + HealthHistory + " AND b.PhysicalHistory =" + PhysicalHistory + " AND b.MentalHistory = " + MentalHistory + " AND b.MilitaryHistory = " + MilitaryHistory + " AND b.LawResponse =" + LawResponse + " AND b.Experience = " + Experience + " AND b.JobSpots =" + JobSpots + " AND b.AcademicRequirements =" + AcademicPreparation + "\n"
                 + "CREATE (a)-[r:Offers]->(b)";
         return Cypher;
+    }
+    
+    public String CypherJobRequestCreator(String CIF, String userID, String jobType, String Salary, String Schedule){
+        String CypherQuery="";
+        CIF = "\"" + CIF + "\"";
+        userID = "\"" + userID + "\"";
+        jobType = "\"" + jobType + "\"";
+        Salary = "\"" + Salary + "\"";
+        Schedule = "\"" + Schedule + "\"";
+        CypherQuery="CREATE (a:JobRequest{CompanyCIF: "+CIF+", IDPerson: "+userID+", jobDescription: "+jobType+", jobSalary: "+Salary+", jobSchedule: "+Schedule+"})";
+        return CypherQuery;
+    }
+    
+    public String CypherJobRequestRelationShipCreator(String CIF, String userID, String jobType, String Salary, String Schedule){
+        String CypherQuery="";
+        CIF = "\"" + CIF + "\"";
+        userID = "\"" + userID + "\"";
+        jobType = "\"" + jobType + "\"";
+        Salary = "\"" + Salary + "\"";
+        Schedule = "\"" + Schedule + "\"";
+        CypherQuery="MATCH (a:Company), (b:JobRequest), (c:Person)\n"
+                + "WHERE a.CIF = "+CIF+" AND b.CompanyCIF = "+CIF+ " AND c.idNumber ="+userID+" AND b.jobDescription ="+jobType+" AND b.jobSalary ="+Salary+" AND b.jobSchedule ="+Schedule+ "\n"
+                + "CREATE (a)-[r:getRequested]->(b)-[s:request]->(c)";
+        return CypherQuery;
     }
 
     public String RequestNationalIdentification() {
